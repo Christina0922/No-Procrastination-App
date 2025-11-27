@@ -37,16 +37,6 @@ const CharacterVoicePlayer: React.FC<CharacterVoicePlayerProps> = ({
     }
   }, [enabled, message, characterVoice]);
 
-  // 오디오 파일이 있는 경우 사용 (추후 구현)
-  const playAudio = (audioUrl: string) => {
-    if (audioRef.current) {
-      audioRef.current.src = audioUrl;
-      audioRef.current.play().catch(error => {
-        console.error('Audio play error:', error);
-      });
-    }
-  };
-
   return (
     <div style={{ display: 'none' }}>
       <audio ref={audioRef} />

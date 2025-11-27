@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getTodos, getStatistics, setStatistics, type Statistics, type DailyStat } from '../utils/storage';
-import { isToday, formatDate } from '../utils/timeUtils';
+import { getTodos, getStatistics, setStatistics, type DailyStat } from '../utils/storage';
+import { isToday } from '../utils/timeUtils';
 import type { Todo } from '../hooks/useTodos';
 
 const StatisticsPage: React.FC = () => {

@@ -1,19 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getSettings } from '../utils/storage';
+import { getSettings, type Settings } from '../utils/storage';
 import { getCurrentTimeString, getMinutesUntil, isTimeBefore } from '../utils/timeUtils';
 import { nudgeMessages } from '../data/nudgeMessages';
 import type { Todo } from './useTodos';
 
-interface NudgeSettings {
-  nudgeType: 'soft' | 'direct' | 'funny' | 'strong';
-  characterVoice: string;
-  notificationType: 'popup' | 'voice' | 'vibration';
-}
-
 export const useNudge = (todos: Todo[]) => {
   const [nudgeTriggered, setNudgeTriggered] = useState(false);
   const [currentNudge, setCurrentNudge] = useState<string | null>(null);
-  const [settings, setSettings] = useState<NudgeSettings>(getSettings());
+  const [settings, setSettings] = useState<Settings>(getSettings());
 
   useEffect(() => {
     const savedSettings = getSettings();

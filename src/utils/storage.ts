@@ -47,12 +47,18 @@ export const setTodos = (todos: any[]) => storage.set(STORAGE_KEYS.TODOS, todos)
 export const getRewards = () => storage.get(STORAGE_KEYS.REWARDS, []);
 export const setRewards = (rewards: any[]) => storage.set(STORAGE_KEYS.REWARDS, rewards);
 
-export const getSettings = () => storage.get(STORAGE_KEYS.SETTINGS, {
+export interface Settings {
+  nudgeType: 'soft' | 'direct' | 'funny' | 'strong';
+  characterVoice: string;
+  notificationType: 'popup' | 'voice' | 'vibration';
+}
+
+export const getSettings = (): Settings => storage.get<Settings>(STORAGE_KEYS.SETTINGS, {
   nudgeType: 'soft',
   characterVoice: '1',
   notificationType: 'popup'
 });
-export const setSettings = (settings: any) => storage.set(STORAGE_KEYS.SETTINGS, settings);
+export const setSettings = (settings: Settings) => storage.set(STORAGE_KEYS.SETTINGS, settings);
 
 export interface DailyStat {
   completed: number;

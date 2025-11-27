@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTodos, setTodos } from '../utils/storage';
-import { getCurrentTimeString, isToday, getMinutesUntil } from '../utils/timeUtils';
+import { getCurrentTimeString, isToday } from '../utils/timeUtils';
 
 export interface Todo {
   id: string;

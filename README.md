@@ -98,6 +98,11 @@ src/
 - 설정
 - 통계 데이터
 
+## 배포
+
+이 프로젝트는 Vercel에 배포되어 있습니다:
+- **프로덕션 URL**: https://no-procrastination-app.vercel.app
+
 ## 라이선스
 
 MIT

@@ -54,12 +54,26 @@ export const getSettings = () => storage.get(STORAGE_KEYS.SETTINGS, {
 });
 export const setSettings = (settings: any) => storage.set(STORAGE_KEYS.SETTINGS, settings);
 
-export const getStatistics = () => storage.get(STORAGE_KEYS.STATISTICS, {
+export interface DailyStat {
+  completed: number;
+  total: number;
+  rate: number;
+}
+
+export interface Statistics {
+  dailyStats: { [key: string]: DailyStat };
+  weeklyStats: { [key: string]: DailyStat };
+  monthlyStats: { [key: string]: DailyStat };
+  streakDays: number;
+  lastCompletedDate: string | null;
+}
+
+export const getStatistics = (): Statistics => storage.get<Statistics>(STORAGE_KEYS.STATISTICS, {
   dailyStats: {},
   weeklyStats: {},
   monthlyStats: {},
   streakDays: 0,
   lastCompletedDate: null
 });
-export const setStatistics = (stats: any) => storage.set(STORAGE_KEYS.STATISTICS, stats);
+export const setStatistics = (stats: Statistics) => storage.set(STORAGE_KEYS.STATISTICS, stats);
 

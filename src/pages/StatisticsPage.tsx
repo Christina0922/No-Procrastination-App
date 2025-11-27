@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getTodos, getStatistics, setStatistics } from '../utils/storage';
+import { getTodos, getStatistics, setStatistics, type Statistics, type DailyStat } from '../utils/storage';
 import { isToday, formatDate } from '../utils/timeUtils';
 import type { Todo } from '../hooks/useTodos';
 
@@ -52,7 +52,7 @@ const StatisticsPage: React.FC = () => {
     return dates.map(date => ({
       date: date.split('-').slice(1).join('/'),
       달성률: stats.dailyStats[date]?.rate || 0
-    }));
+    })) as Array<{ date: string; 달성률: number }>;
   };
 
   const getWeeklyData = () => {
@@ -63,13 +63,14 @@ const StatisticsPage: React.FC = () => {
       const d = new Date(date);
       const weekKey = `${d.getFullYear()}-W${Math.ceil(d.getDate() / 7)}`;
       if (!weeks[weekKey]) weeks[weekKey] = [];
-      weeks[weekKey].push(stats.dailyStats[date]?.rate || 0);
+      const rate = stats.dailyStats[date]?.rate || 0;
+      weeks[weekKey].push(rate);
     });
 
     return Object.keys(weeks).map(week => ({
       week,
       달성률: weeks[week].reduce((a, b) => a + b, 0) / weeks[week].length
-    }));
+    })) as Array<{ week: string; 달성률: number }>;
   };
 
   const getMonthlyData = () => {
@@ -79,13 +80,14 @@ const StatisticsPage: React.FC = () => {
     dates.forEach(date => {
       const monthKey = date.substring(0, 7); // YYYY-MM
       if (!months[monthKey]) months[monthKey] = [];
-      months[monthKey].push(stats.dailyStats[date]?.rate || 0);
+      const rate = stats.dailyStats[date]?.rate || 0;
+      months[monthKey].push(rate);
     });
 
     return Object.keys(months).map(month => ({
       month: month.split('-')[1] + '월',
       달성률: months[month].reduce((a, b) => a + b, 0) / months[month].length
-    }));
+    })) as Array<{ month: string; 달성률: number }>;
   };
 
   const chartData = period === 'day' ? getDailyData() : period === 'week' ? getWeeklyData() : getMonthlyData();
@@ -165,7 +167,7 @@ const StatisticsPage: React.FC = () => {
         <div style={{ padding: '20px', backgroundColor: '#e3f2fd', borderRadius: '12px', textAlign: 'center' }}>
           <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>총 할 일 수</div>
           <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#2196f3' }}>
-            {Object.values(stats.dailyStats).reduce((sum, day) => sum + (day.total || 0), 0)}
+            {Object.values(stats.dailyStats).reduce((sum: number, day: DailyStat) => sum + (day.total || 0), 0)}
           </div>
         </div>
       </div>

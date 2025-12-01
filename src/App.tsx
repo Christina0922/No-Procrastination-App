@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import HomePage from './pages/HomePage';
 import RewardPage from './pages/RewardPage';
 import SettingsPage from './pages/SettingsPage';
+import GiftHistoryPage from './pages/GiftHistoryPage';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import './App.css';
 
@@ -30,6 +31,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/rewards" element={<RewardPage />} />
+          <Route path="/gift-history" element={<GiftHistoryPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route 
             path="/statistics" 

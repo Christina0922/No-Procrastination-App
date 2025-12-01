@@ -53,13 +53,15 @@ export interface Settings {
   characterVoice: string;
   notificationType: 'popup' | 'voice' | 'vibration';
   reminderTiming: '10min' | '30min' | 'deadline' | 'all';
+  timeFormat: '12h' | '24h'; // 12시간제 또는 24시간제
 }
 
 export const getSettings = (): Settings => storage.get<Settings>(STORAGE_KEYS.SETTINGS, {
   nudgeType: 'soft',
   characterVoice: '1',
   notificationType: 'popup',
-  reminderTiming: 'all'
+  reminderTiming: 'all',
+  timeFormat: '12h' // 기본값은 12시간제
 });
 export const setSettings = (settings: Settings) => storage.set(STORAGE_KEYS.SETTINGS, settings);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSettings, setSettings, type Settings } from '../utils/storage';
+import { setSettings, type Settings } from '../utils/storage';
 import { characterVoices } from '../data/characterVoices';
 import { useAudioPlayer } from '../hooks/useAudioPlayer';
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import { getSettings, setSettings, type Settings } from '../utils/storage';
-import { motivationMessages, getMessagesByCategory, categories } from '../data/motivationMessages';
+import { setSettings, type Settings } from '../utils/storage';
+import { getMessagesByCategory, categories } from '../data/motivationMessages';
 
 interface MessageSelectorProps {
   settings: Settings;

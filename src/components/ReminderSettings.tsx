@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSettings, setSettings, type Settings } from '../utils/storage';
+import { setSettings, type Settings } from '../utils/storage';
 import { requestNotificationPermission } from '../utils/notification';
 
 interface ReminderSettingsProps {

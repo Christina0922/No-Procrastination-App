@@ -34,8 +34,10 @@ export const useTodoTemplates = () => {
    */
   const getTodayTemplates = (): TodoTemplate[] => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = 일요일
     const dayOfMonth = today.getDate();
+    const dayOfWeek = today.getDay(); // 0=일요일, 1=월요일, ..., 6=토요일
+    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const todayDayName = dayNames[dayOfWeek];
 
     return templates.filter(template => {
       if (!template.enabled) return false;
@@ -44,8 +46,11 @@ export const useTodoTemplates = () => {
         case 'daily':
           return true;
         case 'weekly':
-          // 매주 같은 요일에만 (예: 매주 월요일)
-          // 간단히 매주 활성화로 처리
+          // 요일 선택이 있으면 오늘 요일과 매칭되는지 확인
+          if (template.days && template.days.length > 0) {
+            return template.days.includes(todayDayName);
+          }
+          // 요일 선택이 없으면 매주 활성화
           return true;
         case 'monthly':
           // 매월 같은 날짜에만 (예: 매월 1일)
@@ -61,11 +66,10 @@ export const useTodoTemplates = () => {
    */
   const applyTemplates = (): void => {
     const todayTemplates = getTodayTemplates();
-    const allTodos = getTodos();
-    const today = new Date().toISOString().split('T')[0];
+    const allTodos: Todo[] = getTodos();
 
     // 오늘 이미 생성된 할 일들
-    const todayTodos = allTodos.filter((todo: Todo) => 
+    const todayTodos: Todo[] = allTodos.filter((todo: Todo) => 
       isToday(todo.createdAt)
     );
 

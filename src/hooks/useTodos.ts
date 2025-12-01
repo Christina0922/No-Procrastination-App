@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { getTodos, setTodos } from '../utils/storage';
-import { getCurrentTimeString, isToday } from '../utils/timeUtils';
+import { getCurrentTimeString, isToday, getCurrentAmPm, timeStringToDate } from '../utils/timeUtils';
 
 export interface Todo {
   id: string;
   text: string;
   deadline: string; // HH:mm
+  amPm?: 'AM' | 'PM'; // AM/PM 구분
   importance: number; // 1~3
   isCompleted: boolean;
   createdAt: string;
@@ -29,11 +30,12 @@ export const useTodos = () => {
     setTodosState(newTodos);
   };
 
-  const addTodo = (text: string, deadline: string, importance: number) => {
+  const addTodo = (text: string, deadline: string, importance: number, amPm?: 'AM' | 'PM') => {
     const newTodo: Todo = {
       id: Date.now().toString(),
       text,
       deadline,
+      amPm: amPm || getCurrentAmPm(),
       importance,
       isCompleted: false,
       createdAt: new Date().toISOString()

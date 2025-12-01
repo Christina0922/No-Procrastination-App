@@ -10,6 +10,7 @@ export interface TodoTemplate {
   deadline: string; // HH:mm 형식
   importance: 1 | 2 | 3;
   enabled: boolean;
+  days?: string[]; // 요일 배열 ['월', '화', '수', '목', '금', '토', '일']
 }
 
 /**

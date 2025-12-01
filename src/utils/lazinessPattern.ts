@@ -79,7 +79,7 @@ export const getAverageProcrastinationTime = (): number => {
   
   if (completedTodos.length === 0) return 0;
 
-  const totalMinutes = completedTodos.reduce((sum, todo) => {
+  const totalMinutes = completedTodos.reduce((sum: number, todo: Todo) => {
     const createdAt = new Date(todo.createdAt);
     const startedAt = todo.startedAt ? new Date(`${new Date().toISOString().split('T')[0]}T${todo.startedAt}`) : null;
     if (!startedAt) return sum;

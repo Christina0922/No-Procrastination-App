@@ -51,7 +51,7 @@ const AITodoSuggestions: React.FC = () => {
   };
 
   return (
-    <div style={{ marginBottom: '24px' }}>
+    <div style={{ marginBottom: '16px' }}>
       <div style={{ marginBottom: '16px' }}>
         <h3 style={{ fontSize: '18px', marginBottom: '12px', color: '#333' }}>
           🤖 오늘 할 일 추천받기
@@ -97,53 +97,89 @@ const AITodoSuggestions: React.FC = () => {
       {showSuggestions && suggestedTodo && (
         <div
           style={{
-            padding: '16px',
-            backgroundColor: '#e3f2fd',
-            borderRadius: '8px',
-            border: '2px solid #2196f3'
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+            padding: '20px'
           }}
+          onClick={handleDismiss}
         >
-          <div style={{ marginBottom: '12px' }}>
-            <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '4px' }}>
-              {suggestedTodo.text}
+          <div
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '24px',
+              maxWidth: '500px',
+              width: '100%',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '20px', color: '#333' }}>
+              ✨ 추천 할 일
+            </h3>
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '12px', color: '#2196f3' }}>
+                {suggestedTodo.text}
+              </div>
+              {suggestedTodo.reason && (
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#f5f5f5', 
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: '#666',
+                  lineHeight: '1.6',
+                  marginBottom: '12px'
+                }}>
+                  💡 {suggestedTodo.reason}
+                </div>
+              )}
+              <div style={{ fontSize: '12px', color: '#888', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <span>카테고리: {categoryLabels[suggestedTodo.category]}</span>
+                <span>중요도: {suggestedTodo.importance === 1 ? '낮음' : suggestedTodo.importance === 2 ? '보통' : '높음'}</span>
+                <span>마감: {suggestedTodo.defaultDeadline || '18:00'}</span>
+              </div>
             </div>
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              카테고리: {categoryLabels[suggestedTodo.category]} | 
-              중요도: {suggestedTodo.importance === 1 ? '낮음' : suggestedTodo.importance === 2 ? '보통' : '높음'} |
-              마감: {suggestedTodo.defaultDeadline || '18:00'}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleAddSuggestion}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  backgroundColor: '#4caf50',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >
+                오늘 할 일에 추가하기
+              </button>
+              <button
+                onClick={handleDismiss}
+                style={{
+                  padding: '12px 20px',
+                  backgroundColor: '#f44336',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  cursor: 'pointer'
+                }}
+              >
+                취소
+              </button>
             </div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={handleAddSuggestion}
-              style={{
-                flex: 1,
-                padding: '10px',
-                backgroundColor: '#4caf50',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              추가하기
-            </button>
-            <button
-              onClick={handleDismiss}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#f44336',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}
-            >
-              취소
-            </button>
           </div>
         </div>
       )}

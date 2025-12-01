@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { getSettings, type Settings } from '../utils/storage';
-import { getMinutesUntil } from '../utils/timeUtils';
+import { timeStringToDate } from '../utils/timeUtils';
 import { showBrowserNotification } from '../utils/notification';
 import { motivationMessages } from '../data/motivationMessages';
 import type { Todo } from './useTodos';
@@ -10,7 +10,7 @@ import type { Todo } from './useTodos';
  * 할 일의 마감 시간을 기준으로 브라우저 알림을 예약합니다.
  */
 export const useReminder = (todos: Todo[]) => {
-  const notificationTimersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const notificationTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const notifiedTodosRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
@@ -23,14 +23,12 @@ export const useReminder = (todos: Todo[]) => {
 
     const settings = getSettings();
     const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     todos.forEach(todo => {
       if (todo.isCompleted) return;
 
-      const deadlineMinutes = getMinutesUntil(todo.deadline) + currentMinutes;
-      const deadlineDate = new Date(now);
-      deadlineDate.setHours(Math.floor(deadlineMinutes / 60), deadlineMinutes % 60, 0, 0);
+      const amPm = todo.amPm || 'AM';
+      const deadlineDate = timeStringToDate(todo.deadline, amPm);
 
       // 마감 30분 전 알림
       if (settings.reminderTiming === '30min' || settings.reminderTiming === 'all') {

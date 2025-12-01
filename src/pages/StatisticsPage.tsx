@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getTodos, getStatistics, setStatistics, type DailyStat } from '../utils/storage';
-import { isToday, formatDate } from '../utils/timeUtils';
+import { isToday } from '../utils/timeUtils';
 import LazinessPatternAnalysis from '../components/LazinessPatternAnalysis';
+import AdBanner from '../components/AdBanner';
+import CoupangRandomLink from '../components/CoupangRandomLink';
 import type { Todo } from '../hooks/useTodos';
 
 const StatisticsPage: React.FC = () => {
@@ -177,10 +179,77 @@ const StatisticsPage: React.FC = () => {
   const timePattern = getCompletionTimePattern();
   const importanceData = getImportanceCompletionRate();
 
-  const COLORS = ['#2196f3', '#4caf50', '#ff9800', '#f44336', '#9c27b0'];
+  // 이번 주 최고 생산성 날짜
+  const getBestProductivityDay = () => {
+    const dates = Object.keys(stats.dailyStats).sort().slice(-7);
+    let bestDay = { date: '', rate: 0 };
+    dates.forEach(date => {
+      const rate = stats.dailyStats[date]?.rate || 0;
+      if (rate > bestDay.rate) {
+        bestDay = { date, rate };
+      }
+    });
+    return bestDay;
+  };
+
+  // 이번 달 평균 완료율
+  const getMonthlyAverage = () => {
+    const today = new Date();
+    const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+    const monthDates = Object.keys(stats.dailyStats).filter(date => date.startsWith(currentMonth));
+    if (monthDates.length === 0) return 0;
+    const totalRate = monthDates.reduce((sum, date) => sum + (stats.dailyStats[date]?.rate || 0), 0);
+    return totalRate / monthDates.length;
+  };
+
+  // 완료 누적 추이
+  const getCumulativeData = () => {
+    const dates = Object.keys(stats.dailyStats).sort();
+    let cumulative = 0;
+    return dates.map(date => {
+      cumulative += stats.dailyStats[date]?.completed || 0;
+      return {
+        date: date.split('-').slice(1).join('/'),
+        누적완료: cumulative
+      };
+    });
+  };
+
+  // 중요도별 평균 마감 시간
+  const getImportanceDeadlineAverage = () => {
+    const todos = getTodos();
+    const importanceDeadlines: { [key: number]: number[] } = { 1: [], 2: [], 3: [] };
+    todos.forEach((todo: Todo) => {
+      if (todo.deadline) {
+        const [hours, minutes] = todo.deadline.split(':').map(Number);
+        const totalMinutes = hours * 60 + minutes;
+        importanceDeadlines[todo.importance].push(totalMinutes);
+      }
+    });
+    return Object.entries(importanceDeadlines).map(([importance, times]) => {
+      const avg = times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
+      const hours = Math.floor(avg / 60);
+      const mins = Math.floor(avg % 60);
+      return {
+        importance: importance === '1' ? '낮음' : importance === '2' ? '보통' : '높음',
+        averageTime: `${hours}:${String(mins).padStart(2, '0')}`
+      };
+    });
+  };
+
+  const bestDay = getBestProductivityDay();
+  const monthlyAvg = getMonthlyAverage();
+  const cumulativeData = getCumulativeData();
+  const importanceDeadlines = getImportanceDeadlineAverage();
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+    <div style={{ 
+      padding: '20px', 
+      maxWidth: '1000px', 
+      margin: '0 auto',
+      backgroundColor: 'var(--bg-primary)',
+      color: 'var(--text-primary)'
+    }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h1 style={{ margin: 0, fontSize: '28px', color: '#333' }}>통계</h1>
         <button
@@ -244,6 +313,59 @@ const StatisticsPage: React.FC = () => {
         >
           월별
         </button>
+      </div>
+
+      {/* 추가 통계 카드 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ padding: '20px', backgroundColor: '#e3f2fd', borderRadius: '12px', textAlign: 'center', border: '1px solid #2196f3' }}>
+          <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>이번 주 최고 생산성</div>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#2196f3', marginBottom: '4px' }}>
+            {bestDay.rate.toFixed(0)}%
+          </div>
+          <div style={{ fontSize: '12px', color: '#888' }}>
+            {bestDay.date ? new Date(bestDay.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) : '없음'}
+          </div>
+        </div>
+        <div style={{ padding: '20px', backgroundColor: '#f3e5f5', borderRadius: '12px', textAlign: 'center', border: '1px solid #9c27b0' }}>
+          <div style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>이번 달 평균 완료율</div>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#9c27b0' }}>
+            {monthlyAvg.toFixed(0)}%
+          </div>
+        </div>
+      </div>
+
+      {/* 완료 누적 추이 그래프 */}
+      <div style={{ 
+        marginBottom: '24px', 
+        padding: '20px', 
+        backgroundColor: 'var(--card-bg)', 
+        borderRadius: '12px', 
+        boxShadow: '0 2px 8px var(--shadow)' 
+      }}>
+        <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>완료 누적 추이</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={cumulativeData.slice(-30)}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="누적완료" stroke="#4caf50" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* 중요도별 평균 마감 시간 */}
+      <div style={{ marginBottom: '24px', padding: '20px', backgroundColor: '#fff', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>중요도별 평균 마감 시간</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {importanceDeadlines.map((item, index) => (
+            <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+              <span style={{ fontWeight: 'bold' }}>{item.importance}</span>
+              <span style={{ fontSize: '18px', color: '#2196f3' }}>{item.averageTime}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
@@ -386,6 +508,12 @@ const StatisticsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 쿠팡 파트너스 랜덤 링크 */}
+      <CoupangRandomLink />
+
+      {/* Google AdSense 광고 */}
+      <AdBanner slot="STATS_01" />
     </div>
   );
 };

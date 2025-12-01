@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTodoTemplates } from '../hooks/useTodoTemplates';
-import { useTodos } from '../hooks/useTodos';
+import AdBanner from './AdBanner';
+import CoupangRandomLink from './CoupangRandomLink';
 import type { TodoTemplate } from '../data/todoTemplates';
 
 /**
@@ -9,14 +10,29 @@ import type { TodoTemplate } from '../data/todoTemplates';
  */
 const TodoTemplateManager: React.FC = () => {
   const { templates, toggleTemplate, applyTemplates, addTemplate, deleteTemplate } = useTodoTemplates();
-  const { todos } = useTodos();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [expandedTemplates, setExpandedTemplates] = useState<Set<string>>(new Set());
   const [newTemplate, setNewTemplate] = useState<Omit<TodoTemplate, 'id' | 'enabled'>>({
     text: '',
     repeatType: 'daily',
     deadline: '18:00',
-    importance: 2
+    importance: 2,
+    days: []
   });
+
+  const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일'];
+
+  const toggleExpanded = (id: string) => {
+    setExpandedTemplates(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   const handleApplyTemplates = () => {
     applyTemplates();
@@ -30,10 +46,22 @@ const TodoTemplateManager: React.FC = () => {
         text: '',
         repeatType: 'daily',
         deadline: '18:00',
-        importance: 2
+        importance: 2,
+        days: []
       });
       setShowAddForm(false);
     }
+  };
+
+  const toggleDay = (day: string) => {
+    setNewTemplate(prev => {
+      const days = prev.days || [];
+      if (days.includes(day)) {
+        return { ...prev, days: days.filter(d => d !== day) };
+      } else {
+        return { ...prev, days: [...days, day] };
+      }
+    });
   };
 
   const repeatTypeLabels: Record<TodoTemplate['repeatType'], string> = {
@@ -45,7 +73,7 @@ const TodoTemplateManager: React.FC = () => {
   const enabledTemplates = templates.filter(t => t.enabled);
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#fff', borderRadius: '12px', marginBottom: '24px' }}>
+    <div style={{ padding: '20px', backgroundColor: '#fff', borderRadius: '12px', marginBottom: '16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h2 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
           🔄 반복 할 일 템플릿
@@ -69,61 +97,89 @@ const TodoTemplateManager: React.FC = () => {
       </div>
 
       <div style={{ marginBottom: '16px' }}>
-        {templates.map(template => (
-          <div
-            key={template.id}
-            style={{
-              padding: '12px',
-              marginBottom: '8px',
-              backgroundColor: template.enabled ? '#e3f2fd' : '#f5f5f5',
-              borderRadius: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              border: `1px solid ${template.enabled ? '#2196f3' : '#ddd'}`
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>
-                {template.text}
-              </div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
-                {repeatTypeLabels[template.repeatType]} | {template.deadline} | 
-                중요도: {template.importance === 1 ? '낮음' : template.importance === 2 ? '보통' : '높음'}
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => toggleTemplate(template.id)}
+        {templates.map(template => {
+          const isExpanded = expandedTemplates.has(template.id);
+          return (
+            <div
+              key={template.id}
+              style={{
+                marginBottom: '8px',
+                border: `1px solid ${template.enabled ? '#2196f3' : '#ddd'}`,
+                borderRadius: '8px',
+                overflow: 'hidden'
+              }}
+            >
+              <div
+                onClick={() => toggleExpanded(template.id)}
                 style={{
-                  padding: '6px 12px',
-                  backgroundColor: template.enabled ? '#4caf50' : '#e0e0e0',
-                  color: template.enabled ? '#fff' : '#333',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '12px',
+                  padding: '12px',
+                  backgroundColor: template.enabled ? '#e3f2fd' : '#f5f5f5',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   cursor: 'pointer'
                 }}
               >
-                {template.enabled ? 'ON' : 'OFF'}
-              </button>
-              <button
-                onClick={() => deleteTemplate(template.id)}
-                style={{
-                  padding: '6px 12px',
-                  backgroundColor: '#f44336',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                삭제
-              </button>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    {template.text}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#666' }}>
+                    {repeatTypeLabels[template.repeatType]} | {template.deadline} | 
+                    중요도: {template.importance === 1 ? '낮음' : template.importance === 2 ? '보통' : '높음'}
+                    {template.days && template.days.length > 0 && ` | 요일: ${template.days.join(', ')}`}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '18px', transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}>
+                    ▶
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleTemplate(template.id);
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      backgroundColor: template.enabled ? '#4caf50' : '#e0e0e0',
+                      color: template.enabled ? '#fff' : '#333',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {template.enabled ? 'ON' : 'OFF'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteTemplate(template.id);
+                    }}
+                    style={{
+                      padding: '6px 12px',
+                      backgroundColor: '#f44336',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    삭제
+                  </button>
+                </div>
+              </div>
+              {isExpanded && (
+                <div style={{ padding: '12px', backgroundColor: '#fff', borderTop: '1px solid #ddd' }}>
+                  <div style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>
+                    상세 정보가 여기에 표시됩니다.
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {!showAddForm ? (
@@ -176,6 +232,38 @@ const TodoTemplateManager: React.FC = () => {
             <option value="weekly">매주</option>
             <option value="monthly">매월</option>
           </select>
+          {newTemplate.repeatType === 'weekly' && (
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                요일 선택:
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {daysOfWeek.map(day => (
+                  <label
+                    key={day}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      padding: '6px 12px',
+                      border: `2px solid ${(newTemplate.days || []).includes(day) ? '#2196f3' : '#ddd'}`,
+                      borderRadius: '6px',
+                      backgroundColor: (newTemplate.days || []).includes(day) ? '#e3f2fd' : '#fff',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={(newTemplate.days || []).includes(day)}
+                      onChange={() => toggleDay(day)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '14px' }}>{day}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <input
             type="time"
             value={newTemplate.deadline}
@@ -228,7 +316,8 @@ const TodoTemplateManager: React.FC = () => {
                   text: '',
                   repeatType: 'daily',
                   deadline: '18:00',
-                  importance: 2
+                  importance: 2,
+                  days: []
                 });
               }}
               style={{
@@ -247,9 +336,14 @@ const TodoTemplateManager: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* 쿠팡 파트너스 랜덤 링크 */}
+      <CoupangRandomLink />
+
+      {/* Google AdSense 광고 */}
+      <AdBanner slot="TEMP_01" />
     </div>
   );
 };
 
 export default TodoTemplateManager;
-

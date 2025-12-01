@@ -10,7 +10,7 @@ import CharacterVoicePlayer from '../components/CharacterVoicePlayer';
 import AITodoSuggestions from '../components/AITodoSuggestions';
 import TodoTemplateManager from '../components/TodoTemplateManager';
 import AdBanner from '../components/AdBanner';
-import CoupangRandomLink from '../components/CoupangRandomLink';
+import CoupangBanner from '../components/CoupangBanner';
 import { getSettings } from '../utils/storage';
 import { getCurrentAmPm } from '../utils/timeUtils';
 import { useTodoTemplates } from '../hooks/useTodoTemplates';
@@ -407,8 +407,8 @@ const HomePage: React.FC = () => {
 
       <TodoList todos={todos} onToggle={handleToggleComplete} onDelete={deleteTodo} />
 
-      {/* 쿠팡 파트너스 랜덤 링크 */}
-      <CoupangRandomLink />
+      {/* 쿠팡 파트너스 배너 - 할 일 목록 아래 */}
+      <CoupangBanner />
 
       {/* Google AdSense 광고 */}
       <AdBanner slot="HOME_01" style={{ marginTop: '12px', marginBottom: '0' }} />

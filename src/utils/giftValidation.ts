@@ -3,8 +3,29 @@
  * 전체 동작 흐름을 검증하는 함수들
  */
 
-import { validatePoints, getGiftHistory, type GiftProduct } from '../api/gift';
-import { getRewards } from './storage';
+import { validatePoints, type Reward } from '../api/gift';
+
+// GiftHistory는 더 이상 사용되지 않으므로 빈 배열로 처리
+type GiftHistory = {
+  date: string;
+  productName: string;
+  productId: string;
+  phone: string;
+  usedPoints: number;
+  status: 'SUCCESS' | 'FAILED';
+};
+
+const getGiftHistory = (): GiftHistory[] => {
+  try {
+    const existing = localStorage.getItem('giftHistory');
+    return existing ? JSON.parse(existing) : [];
+  } catch {
+    return [];
+  }
+};
+
+// Reward를 GiftProduct로 사용 (타입 별칭)
+type GiftProduct = Reward;
 
 /**
  * 포인트 차감 검증
@@ -168,21 +189,21 @@ export const validateGiftHistory = (): { valid: boolean; errors: string[] } => {
  */
 export const validatePointsSystem = (): { valid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  const rewards = getRewards();
-
-  // 총 포인트 계산
-  const totalPoints = rewards.reduce((sum: number, reward: any) => {
-    if (typeof reward.amount !== 'number') {
-      errors.push(`보상 ${reward.id}: 포인트가 숫자가 아닙니다.`);
-      return sum;
+  
+  // localStorage에서 userPoints 가져오기
+  try {
+    const savedPoints = localStorage.getItem('userPoints');
+    const userPoints = savedPoints ? Number(savedPoints) : 0;
+    
+    if (isNaN(userPoints)) {
+      errors.push('사용자 포인트가 유효한 숫자가 아닙니다.');
     }
-    return sum + reward.amount;
-  }, 0);
-
-  // 음수 포인트 체크 (차감은 허용)
-  const negativePoints = rewards.filter((reward: any) => reward.amount < 0);
-  if (negativePoints.length > 0 && totalPoints < 0) {
-    errors.push('총 포인트가 음수입니다. 시스템 오류 가능성이 있습니다.');
+    
+    if (userPoints < 0) {
+      errors.push('총 포인트가 음수입니다. 시스템 오류 가능성이 있습니다.');
+    }
+  } catch (error) {
+    errors.push('포인트 시스템 검증 중 오류 발생');
   }
 
   return {

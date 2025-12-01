@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getGiftHistory, type GiftHistory } from '../api/gift';
+// GiftHistory는 더 이상 사용되지 않으므로 빈 배열로 처리
+type GiftHistory = {
+  date: string;
+  productName: string;
+  productId: string;
+  phone: string;
+  usedPoints: number;
+  status: 'SUCCESS' | 'FAILED';
+};
+
+const getGiftHistory = (): GiftHistory[] => {
+  // localStorage에서 가져오거나 빈 배열 반환
+  try {
+    const existing = localStorage.getItem('giftHistory');
+    return existing ? JSON.parse(existing) : [];
+  } catch {
+    return [];
+  }
+};
 import { formatDate } from '../utils/timeUtils';
 
 const GiftHistoryPage: React.FC = () => {

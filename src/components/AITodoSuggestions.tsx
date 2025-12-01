@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { todoSuggestions, getRandomSuggestion, getRandomSuggestionFromAll, type TodoSuggestion } from '../data/todoSuggestions';
 import { useTodos } from '../hooks/useTodos';
+import { getCurrentAmPm, timeStringToDate } from '../utils/timeUtils';
 
 /**
  * AI 추천 할 일 생성기 컴포넌트
@@ -39,7 +40,11 @@ const AITodoSuggestions: React.FC = () => {
   const handleAddSuggestion = () => {
     if (suggestedTodo) {
       const deadline = suggestedTodo.defaultDeadline || '18:00';
-      addTodo(suggestedTodo.text, deadline, suggestedTodo.importance);
+      // deadline 시간을 기준으로 AM/PM 결정
+      const deadlineDate = timeStringToDate(deadline, 'PM'); // 기본값 PM으로 변환 시도
+      const hours = deadlineDate.getHours();
+      const amPm: 'AM' | 'PM' = hours < 12 ? 'AM' : 'PM';
+      addTodo(suggestedTodo.text, deadline, suggestedTodo.importance, amPm);
       setShowSuggestions(false);
       setSuggestedTodo(null);
     }

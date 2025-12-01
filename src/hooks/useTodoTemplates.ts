@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getTodos, setTodos } from '../utils/storage';
-import { isToday } from '../utils/timeUtils';
+import { isToday, getCurrentAmPm } from '../utils/timeUtils';
 import { defaultTemplates, type TodoTemplate } from '../data/todoTemplates';
 import type { Todo } from '../types/todo';
 
@@ -84,9 +84,11 @@ export const useTodoTemplates = () => {
           id: `${template.id}-${Date.now()}`,
           text: template.text,
           deadline: template.deadline,
+          amPm: getCurrentAmPm(),
           importance: template.importance,
           isCompleted: false,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          startedAt: null
         };
 
         allTodos.push(newTodo);

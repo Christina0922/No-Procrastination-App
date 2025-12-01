@@ -2,7 +2,8 @@ const STORAGE_KEYS = {
   TODOS: 'no-procrastination-todos',
   REWARDS: 'no-procrastination-rewards',
   SETTINGS: 'no-procrastination-settings',
-  STATISTICS: 'no-procrastination-statistics'
+  STATISTICS: 'no-procrastination-statistics',
+  EXCHANGE_HISTORY: 'no-procrastination-exchange-history'
 };
 
 export const storage = {
@@ -48,15 +49,17 @@ export const getRewards = () => storage.get(STORAGE_KEYS.REWARDS, []);
 export const setRewards = (rewards: any[]) => storage.set(STORAGE_KEYS.REWARDS, rewards);
 
 export interface Settings {
-  nudgeType: 'soft' | 'direct' | 'funny' | 'strong';
+  nudgeType: 'soft' | 'direct' | 'funny' | 'strong' | 'emotional';
   characterVoice: string;
   notificationType: 'popup' | 'voice' | 'vibration';
+  reminderTiming: '10min' | '30min' | 'deadline' | 'all';
 }
 
 export const getSettings = (): Settings => storage.get<Settings>(STORAGE_KEYS.SETTINGS, {
   nudgeType: 'soft',
   characterVoice: '1',
-  notificationType: 'popup'
+  notificationType: 'popup',
+  reminderTiming: 'all'
 });
 export const setSettings = (settings: Settings) => storage.set(STORAGE_KEYS.SETTINGS, settings);
 
@@ -82,4 +85,20 @@ export const getStatistics = (): Statistics => storage.get<Statistics>(STORAGE_K
   lastCompletedDate: null
 });
 export const setStatistics = (stats: Statistics) => storage.set(STORAGE_KEYS.STATISTICS, stats);
+
+export interface ExchangeHistory {
+  id: string;
+  rewardName: string;
+  pointsUsed: number;
+  exchangedAt: string;
+  status: 'pending' | 'completed' | 'cancelled';
+}
+
+export const getExchangeHistory = (): ExchangeHistory[] => storage.get<ExchangeHistory[]>(STORAGE_KEYS.EXCHANGE_HISTORY, []);
+export const setExchangeHistory = (history: ExchangeHistory[]) => storage.set(STORAGE_KEYS.EXCHANGE_HISTORY, history);
+export const addExchangeHistory = (exchange: ExchangeHistory) => {
+  const history = getExchangeHistory();
+  history.push(exchange);
+  setExchangeHistory(history);
+};
 

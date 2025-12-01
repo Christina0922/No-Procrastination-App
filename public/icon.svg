@@ -1,0 +1,29 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .text { font-family: 'Arial', 'Malgun Gothic', sans-serif; font-weight: bold; }
+    </style>
+  </defs>
+  
+  <!-- 검은 배경 -->
+  <rect width="512" height="512" fill="#000000"/>
+  
+  <!-- 빨간색 둥근 사각형 -->
+  <rect x="56" y="56" width="400" height="400" rx="80" ry="80" fill="#f44336"/>
+  
+  <!-- 한글 텍스트: 미루기 방지 -->
+  <text x="256" y="220" 
+        font-size="120" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        class="text">미루기</text>
+  <text x="256" y="340" 
+        font-size="120" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        class="text">방지</text>
+</svg>

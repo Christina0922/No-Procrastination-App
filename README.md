@@ -103,6 +103,14 @@ src/
 이 프로젝트는 Vercel에 배포되어 있습니다:
 - **프로덕션 URL**: https://no-procrastination-app.vercel.app
 
+## 최근 업데이트
+
+- PWA (Progressive Web App) 지원 추가
+- AI 기반 할 일 추천 기능
+- 미루기 패턴 분석 기능
+- 반복 할 일 템플릿 관리 기능
+- 빌드 최적화 및 코드 스플리팅 적용
+
 ## 라이선스
 
 MIT

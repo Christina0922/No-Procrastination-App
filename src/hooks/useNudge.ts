@@ -1,18 +1,60 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getSettings, type Settings } from '../utils/storage';
 import { getCurrentTimeString, getMinutesUntil, isTimeBefore } from '../utils/timeUtils';
-import { nudgeMessages } from '../data/nudgeMessages';
+import { motivationMessages } from '../data/motivationMessages';
+import { requestNotificationPermission, showBrowserNotification } from '../utils/notification';
+import { useReminder } from './useReminder';
 import type { Todo } from './useTodos';
 
+/**
+ * 미루기 방지 유도 메시지 훅
+ * 기존 로직 유지: 할 일 생성 후 10분 미시작, deadline 30분 전, deadline 지남 등의 조건 체크
+ */
 export const useNudge = (todos: Todo[]) => {
   const [nudgeTriggered, setNudgeTriggered] = useState(false);
   const [currentNudge, setCurrentNudge] = useState<string | null>(null);
+  const [currentTodo, setCurrentTodo] = useState<Todo | null>(null);
   const [settings, setSettings] = useState<Settings>(getSettings());
+
+  // 리마인더 훅 사용 (마감 시간 기준 알림)
+  useReminder(todos);
 
   useEffect(() => {
     const savedSettings = getSettings();
     setSettings(savedSettings);
+    requestNotificationPermission();
   }, []);
+
+  const triggerReminder = (todo: Todo, timing: string) => {
+    const filteredMessages = motivationMessages.filter(
+      msg => msg.type === settings.nudgeType
+    );
+    
+    if (filteredMessages.length > 0) {
+      const randomMessage = filteredMessages[Math.floor(Math.random() * filteredMessages.length)];
+      const reminderText = `[${timing}] ${todo.text}: ${randomMessage.text}`;
+      
+      setCurrentNudge(reminderText);
+      setCurrentTodo(todo);
+      setNudgeTriggered(true);
+
+      // 브라우저 알림
+      if (settings.notificationType === 'popup' || settings.notificationType === 'voice') {
+        showBrowserNotification(
+          `할 일 리마인더 - ${timing}`,
+          `${todo.text}\n${randomMessage.text}`,
+          todo.text
+        );
+      }
+
+      // 진동
+      if (settings.notificationType === 'vibration') {
+        if ('vibrate' in navigator) {
+          navigator.vibrate([200, 100, 200]);
+        }
+      }
+    }
+  };
 
   const checkNudgeConditions = useCallback(() => {
     const now = getCurrentTimeString();
@@ -51,46 +93,34 @@ export const useNudge = (todos: Todo[]) => {
 
     const interval = setInterval(() => {
       if (checkNudgeConditions() && !nudgeTriggered) {
-        triggerNudge();
+        const incompleteTodos = todos.filter(t => !t.isCompleted);
+        if (incompleteTodos.length > 0) {
+          const randomTodo = incompleteTodos[Math.floor(Math.random() * incompleteTodos.length)];
+          triggerReminder(randomTodo, '미루기 방지');
+        }
       }
     }, 60000); // 1분마다 체크
 
     return () => clearInterval(interval);
-  }, [todos, checkNudgeConditions, nudgeTriggered]);
-
-  const triggerNudge = () => {
-    const filteredMessages = nudgeMessages.filter(
-      msg => msg.type === settings.nudgeType
-    );
-    
-    if (filteredMessages.length > 0) {
-      const randomMessage = filteredMessages[Math.floor(Math.random() * filteredMessages.length)];
-      setCurrentNudge(randomMessage.text);
-      setNudgeTriggered(true);
-
-      // 알림 방식에 따른 처리
-      if (settings.notificationType === 'voice' || settings.notificationType === 'popup') {
-        // 음성 재생 로직은 CharacterVoicePlayer에서 처리
-      }
-
-      if (settings.notificationType === 'vibration') {
-        // 진동 (모바일)
-        if ('vibrate' in navigator) {
-          navigator.vibrate([200, 100, 200]);
-        }
-      }
-    }
-  };
+  }, [todos, checkNudgeConditions, nudgeTriggered, settings]);
 
   const dismissNudge = () => {
     setNudgeTriggered(false);
     setCurrentNudge(null);
+    setCurrentTodo(null);
   };
 
   return {
     nudgeTriggered,
     currentNudge,
-    triggerNudge,
+    currentTodo,
+    triggerNudge: () => {
+      const incompleteTodos = todos.filter(t => !t.isCompleted);
+      if (incompleteTodos.length > 0) {
+        const randomTodo = incompleteTodos[Math.floor(Math.random() * incompleteTodos.length)];
+        triggerReminder(randomTodo, '수동 알림');
+      }
+    },
     dismissNudge
   };
 };

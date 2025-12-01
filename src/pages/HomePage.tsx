@@ -7,6 +7,8 @@ import TodoList from '../components/TodoList';
 import RewardPopup from '../components/RewardPopup';
 import NudgeMessagePopup from '../components/NudgeMessagePopup';
 import CharacterVoicePlayer from '../components/CharacterVoicePlayer';
+import AITodoSuggestions from '../components/AITodoSuggestions';
+import TodoTemplateManager from '../components/TodoTemplateManager';
 import { getSettings } from '../utils/storage';
 
 const HomePage: React.FC = () => {
@@ -121,6 +123,9 @@ const HomePage: React.FC = () => {
           />
         </div>
       </div>
+
+      <AITodoSuggestions />
+      <TodoTemplateManager />
 
       {!showAddForm ? (
         <button

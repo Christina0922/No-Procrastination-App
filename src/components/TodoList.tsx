@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import TodoItem from './TodoItem';
-import type { Todo } from '../hooks/useTodos';
+import type { Todo } from '../types/todo';
 import { compareTimeWithAmPm } from '../utils/timeUtils';
 
 interface TodoListProps {

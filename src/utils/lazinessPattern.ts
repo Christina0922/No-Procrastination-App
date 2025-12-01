@@ -1,5 +1,5 @@
 import { getTodos } from './storage';
-import type { Todo } from '../hooks/useTodos';
+import type { Todo } from '../types/todo';
 
 /**
  * 게으름 패턴 분석 유틸리티

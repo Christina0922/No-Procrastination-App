@@ -6,7 +6,7 @@ import { isToday } from '../utils/timeUtils';
 import LazinessPatternAnalysis from '../components/LazinessPatternAnalysis';
 import AdBanner from '../components/AdBanner';
 import CoupangRandomLink from '../components/CoupangRandomLink';
-import type { Todo } from '../hooks/useTodos';
+import type { Todo } from '../types/todo';
 
 const StatisticsPage: React.FC = () => {
   const navigate = useNavigate();

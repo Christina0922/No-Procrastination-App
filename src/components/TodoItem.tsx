@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Todo } from '../hooks/useTodos';
+import type { Todo } from '../types/todo';
 import { formatTimeKorean, timeStringToDate, formatRemainingTime } from '../utils/timeUtils';
 import { getSettings } from '../utils/storage';
 

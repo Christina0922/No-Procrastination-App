@@ -4,7 +4,7 @@ import { getCurrentTimeString, getMinutesUntil, isTimeBefore } from '../utils/ti
 import { motivationMessages } from '../data/motivationMessages';
 import { requestNotificationPermission, showBrowserNotification } from '../utils/notification';
 import { useReminder } from './useReminder';
-import type { Todo } from './useTodos';
+import type { Todo } from '../types/todo';
 
 /**
  * 미루기 방지 유도 메시지 훅

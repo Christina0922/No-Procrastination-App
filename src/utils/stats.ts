@@ -1,5 +1,5 @@
 import { getTodos, getStatistics } from './storage';
-import type { Todo } from '../hooks/useTodos';
+import type { Todo } from '../types/todo';
 
 /**
  * 통계 계산 유틸리티 함수

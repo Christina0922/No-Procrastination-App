@@ -3,7 +3,7 @@ import { getSettings, type Settings } from '../utils/storage';
 import { timeStringToDate } from '../utils/timeUtils';
 import { showBrowserNotification } from '../utils/notification';
 import { motivationMessages } from '../data/motivationMessages';
-import type { Todo } from './useTodos';
+import type { Todo } from '../types/todo';
 
 /**
  * 리마인더 훅

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getTodos, setTodos } from '../utils/storage';
 import { isToday } from '../utils/timeUtils';
 import { defaultTemplates, type TodoTemplate } from '../data/todoTemplates';
-import type { Todo } from './useTodos';
+import type { Todo } from '../types/todo';
 
 const STORAGE_KEY = 'no-procrastination-todo-templates';
 

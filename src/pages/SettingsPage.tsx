@@ -5,6 +5,7 @@ import ReminderSettings from '../components/ReminderSettings';
 import MessageSelector from '../components/MessageSelector';
 import CharacterVoiceSelector from '../components/CharacterVoiceSelector';
 import { useTheme } from '../contexts/ThemeContext';
+import CoupangBanner from '../components/CoupangBanner';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -281,6 +282,11 @@ const SettingsPage: React.FC = () => {
             </label>
           ))}
         </div>
+      </div>
+
+      {/* 쿠팡 파트너스 배너 */}
+      <div style={{ marginTop: '32px' }}>
+        <CoupangBanner />
       </div>
     </div>
   );

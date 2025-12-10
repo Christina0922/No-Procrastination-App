@@ -1,35 +1,23 @@
-/**
- * 쿠팡 파트너스 링크 유틸리티
- */
+// src/utils/coupang.ts
+
+import { COUPANG_PRODUCT_LINKS, CoupangProductLink } from "../data/productLinks";
 
 /**
- * 쿠팡 파트너스 링크에 필수 파라미터를 추가합니다.
- * @param originalUrl 원본 쿠팡 링크
- * @returns 파트너스 파라미터가 추가된 링크
+ * 날짜 + 시간 기반의 "가짜 랜덤" 인덱스를 만드는 함수.
+ * - 같은 사용자에게는 같은 시(hour) 동안 항상 같은 상품이 노출됨.
+ * - 시간이 바뀌면 다른 상품이 나올 수 있음.
+ * - 별도 저장소(localStorage) 사용 없이, 순수 계산으로 해결.
  */
-export const linkAppend = (originalUrl: string): string => {
-  if (!originalUrl) return originalUrl;
+export function getHourlyRandomProductLink(): CoupangProductLink {
+  const now = new Date();
 
-  try {
-    const url = new URL(originalUrl);
-    // 파트너스 추적 파라미터 추가
-    url.searchParams.set('src', 'procrastination_app');
-    url.searchParams.set('ref', 'no_procrastination');
-    return url.toString();
-  } catch (error) {
-    // URL 파싱 실패 시 원본 반환
-    console.error('쿠팡 링크 파싱 실패:', error);
-    const separator = originalUrl.includes('?') ? '&' : '?';
-    return `${originalUrl}${separator}src=procrastination_app&ref=no_procrastination`;
-  }
-};
+  // YYYYMMDDHH 형태의 숫자를 seed로 사용
+  const seed =
+    now.getFullYear() * 1000000 +
+    (now.getMonth() + 1) * 10000 +
+    now.getDate() * 100 +
+    now.getHours();
 
-/**
- * 쿠팡 링크를 새 창에서 엽니다.
- * @param url 쿠팡 링크
- */
-export const openCoupangLink = (url: string): void => {
-  const partnerUrl = linkAppend(url);
-  window.open(partnerUrl, '_blank', 'noopener,noreferrer');
-};
-
+  const index = Math.abs(seed) % COUPANG_PRODUCT_LINKS.length;
+  return COUPANG_PRODUCT_LINKS[index];
+}

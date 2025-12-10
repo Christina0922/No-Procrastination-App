@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { todoSuggestions, getRandomSuggestion, getRandomSuggestionFromAll, type TodoSuggestion } from '../data/todoSuggestions';
 import { useTodos } from '../hooks/useTodos';
-import { getCurrentAmPm, timeStringToDate } from '../utils/timeUtils';
+import { timeStringToDate } from '../utils/timeUtils';
 
 /**
  * AI 추천 할 일 생성기 컴포넌트

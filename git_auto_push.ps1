@@ -226,3 +226,6 @@ Write-Host "GitHub 저장소 확인:" -ForegroundColor Cyan
 Write-Host "https://github.com/Christina0922/No-Procrastination-App" -ForegroundColor Blue
 Write-Host ""
 
+
+
+

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { getRewards, validatePoints, exchangeReward, Reward } from "../api/gift";
+import CoupangBanner from "../components/CoupangBanner";
 
 const RewardPage: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -87,6 +88,11 @@ const RewardPage: React.FC = () => {
             </button>
           </div>
         ))}
+      </div>
+
+      {/* 쿠팡 파트너스 배너 */}
+      <div style={{ marginTop: "20px" }}>
+        <CoupangBanner />
       </div>
     </div>
   );

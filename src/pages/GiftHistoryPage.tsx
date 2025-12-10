@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../utils/timeUtils';
+import CoupangBanner from '../components/CoupangBanner';
+
 // GiftHistory는 더 이상 사용되지 않으므로 빈 배열로 처리
 type GiftHistory = {
   date: string;
@@ -19,7 +22,6 @@ const getGiftHistory = (): GiftHistory[] => {
     return [];
   }
 };
-import { formatDate } from '../utils/timeUtils';
 
 const GiftHistoryPage: React.FC = () => {
   const navigate = useNavigate();
@@ -209,6 +211,11 @@ const GiftHistoryPage: React.FC = () => {
         >
           상품권 교환하러 가기
         </button>
+      </div>
+
+      {/* 쿠팡 파트너스 배너 */}
+      <div style={{ marginTop: '32px' }}>
+        <CoupangBanner />
       </div>
     </div>
   );

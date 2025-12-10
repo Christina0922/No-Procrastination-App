@@ -38,15 +38,23 @@ const TodoList: React.FC<TodoListProps> = ({ todos, onToggle, onDelete }) => {
 
   if (todos.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '20px 0', marginBottom: '0', color: '#888' }}>
-        <p style={{ fontSize: '18px', margin: '0 0 8px 0' }}>오늘 할 일이 없습니다.</p>
+      <div style={{ 
+        textAlign: 'center', 
+        padding: '0', 
+        marginTop: '0',
+        marginBottom: '0',
+        minHeight: 'auto',
+        height: 'auto',
+        color: '#888' 
+      }}>
+        <p style={{ fontSize: '18px', margin: '0 0 4px 0' }}>오늘 할 일이 없습니다.</p>
         <p style={{ fontSize: '14px', margin: '0' }}>새로운 할 일을 추가해보세요!</p>
       </div>
     );
   }
 
   return (
-    <div style={{ marginBottom: '0', paddingBottom: '0' }}>
+    <div style={{ marginTop: '0px', paddingTop: '0px', marginBottom: '0', paddingBottom: '0' }}>
       {sortedTodos.map((todo, index) => (
         <TodoItem
           key={todo.id}

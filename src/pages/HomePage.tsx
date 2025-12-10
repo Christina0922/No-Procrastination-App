@@ -10,7 +10,7 @@ import CharacterVoicePlayer from '../components/CharacterVoicePlayer';
 import AITodoSuggestions from '../components/AITodoSuggestions';
 import TodoTemplateManager from '../components/TodoTemplateManager';
 import AdBanner from '../components/AdBanner';
-import CoupangBanner from '../components/CoupangBanner';
+import CoupangRandomLink from '../components/CoupangRandomLink';
 import { getSettings } from '../utils/storage';
 import { getCurrentAmPm } from '../utils/timeUtils';
 import { useTodoTemplates } from '../hooks/useTodoTemplates';
@@ -100,7 +100,15 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        padding: '1px 2px',
+        maxWidth: '800px',
+        margin: '0 auto',
+        boxSizing: 'border-box'
+      }}
+    >
       {/* 요약 카드 */}
       <div style={{
         display: 'grid',
@@ -151,7 +159,7 @@ const HomePage: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h1 style={{ margin: 0, fontSize: '28px', color: '#333' }}>오늘의 할 일</h1>
+        <h1 style={{ margin: '0 0 4px 0', fontSize: '28px', color: '#333' }}>오늘의 할 일</h1>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '14px', color: '#666' }}>오늘 포인트</div>
@@ -211,7 +219,10 @@ const HomePage: React.FC = () => {
           onClick={() => setShowAddForm(true)}
           style={{
             width: '100%',
-            padding: '16px',
+            paddingTop: '12px',
+            paddingBottom: '12px',
+            paddingLeft: '16px',
+            paddingRight: '16px',
             backgroundColor: '#2196f3',
             color: '#fff',
             border: 'none',
@@ -219,7 +230,7 @@ const HomePage: React.FC = () => {
             fontSize: '18px',
             fontWeight: 'bold',
             cursor: 'pointer',
-            marginBottom: '16px'
+            marginBottom: '4px'
           }}
         >
           + 할 일 추가
@@ -407,13 +418,33 @@ const HomePage: React.FC = () => {
 
       <TodoList todos={todos} onToggle={handleToggleComplete} onDelete={deleteTodo} />
 
-      {/* 쿠팡 파트너스 배너 - 할 일 목록 아래 */}
-      <CoupangBanner />
+      {/* 쿠팡 파트너스 배너 영역 - 여백 최소화 */}
+      <div style={{ marginTop: '0px', marginBottom: '0px' }}>
+        <CoupangRandomLink />
+      </div>
+
+      {/* 쿠팡 파트너스 고지 문구 (앱 첫 화면에만 표시) */}
+      <p
+        className="coupang-disclaimer"
+        style={{
+          marginTop: '0px',
+          marginBottom: '0px',
+          paddingTop: '0px',
+          paddingBottom: '0px',
+          fontSize: '12px',
+          textAlign: 'center',
+          opacity: 0.7,
+          lineHeight: '1.1'
+        }}
+      >
+        이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를
+        제공받습니다.
+      </p>
 
       {/* Google AdSense 광고 */}
-      <AdBanner slot="HOME_01" style={{ marginTop: '12px', marginBottom: '0' }} />
+      <AdBanner slot="HOME_01" style={{ marginTop: '0px', marginBottom: '0px', paddingTop: '0px', paddingBottom: '0px' }} />
 
-      <div style={{ marginTop: '16px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
+      <div style={{ marginTop: '0px', marginBottom: '0px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
         <button
           onClick={() => navigate('/rewards')}
           style={{

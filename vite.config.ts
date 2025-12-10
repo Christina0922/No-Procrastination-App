@@ -4,8 +4,9 @@ import { resolve } from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  assetsInclude: ["**/*.png", "**/*.json"],
   server: {
-    port: 5173,
+    port: 1818,
     host: true,
     open: true
   },
@@ -24,6 +25,66 @@ export default defineConfig({
         orientation: 'portrait',
         start_url: '/',
         icons: [
+          {
+            src: '/icon-20.png',
+            sizes: '20x20',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-29.png',
+            sizes: '29x29',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-40.png',
+            sizes: '40x40',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-58.png',
+            sizes: '58x58',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-60.png',
+            sizes: '60x60',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-76.png',
+            sizes: '76x76',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-80.png',
+            sizes: '80x80',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-87.png',
+            sizes: '87x87',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-120.png',
+            sizes: '120x120',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-152.png',
+            sizes: '152x152',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-167.png',
+            sizes: '167x167',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-180.png',
+            sizes: '180x180',
+            type: 'image/png'
+          },
           {
             src: '/icon-192.png',
             sizes: '192x192',

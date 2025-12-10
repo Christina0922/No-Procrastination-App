@@ -76,3 +76,6 @@ const LazinessPatternAnalysis: React.FC = () => {
 
 export default LazinessPatternAnalysis;
 
+
+
+

@@ -84,3 +84,6 @@ export const getMessagesByCategory = (category: "soft" | "direct" | "funny" | "s
  */
 export const categories = ["soft", "direct", "funny", "strong", "emotional"] as const;
 
+
+
+

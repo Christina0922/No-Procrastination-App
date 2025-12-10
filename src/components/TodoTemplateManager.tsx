@@ -73,7 +73,7 @@ const TodoTemplateManager: React.FC = () => {
   const enabledTemplates = templates.filter(t => t.enabled);
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#fff', borderRadius: '12px', marginBottom: '16px' }}>
+    <div style={{ padding: '20px 20px 0 20px', backgroundColor: '#fff', borderRadius: '12px', marginBottom: '0' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h2 style={{ margin: 0, fontSize: '20px', color: '#333' }}>
           🔄 반복 할 일 템플릿
@@ -187,14 +187,18 @@ const TodoTemplateManager: React.FC = () => {
           onClick={() => setShowAddForm(true)}
           style={{
             width: '100%',
-            padding: '12px',
+            paddingTop: '9px',
+            paddingBottom: '9px',
+            paddingLeft: '12px',
+            paddingRight: '12px',
             backgroundColor: '#2196f3',
             color: '#fff',
             border: 'none',
             borderRadius: '8px',
             fontSize: '14px',
             fontWeight: 'bold',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            marginBottom: '16px'
           }}
         >
           + 새 템플릿 추가

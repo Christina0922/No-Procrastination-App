@@ -1,6 +1,6 @@
 /**
  * PWA 아이콘 생성 스크립트
- * SVG를 사용하여 미루기 방지 앱 아이콘을 생성하고 PNG로 변환합니다.
+ * "미뤄?" + 알람시계 디자인으로 아이콘을 생성합니다.
  */
 import sharp from 'sharp';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
@@ -17,48 +17,94 @@ if (!existsSync(publicDir)) {
   mkdirSync(publicDir, { recursive: true });
 }
 
-// SVG 아이콘 생성 (미루기 방지 앱 테마: 체크마크 + 시계)
+// SVG 아이콘 생성 (미뤄? + 알람시계 디자인)
 const createSVG = (size) => {
-  const center = size / 2;
-  const radius = size * 0.35;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  
+  // 텍스트와 아이콘 크기 조정
+  const fontSize1 = size * 0.18; // "미뤄?" 텍스트
+  const fontSize2 = size * 0.12; // "인생 비어" 텍스트
+  const clockSize = size * 0.35; // 시계 크기
+  const clockY = centerY - size * 0.05; // 시계 Y 위치
+  const text1Y = size * 0.22; // "미뤄?" Y 위치
+  const text2Y = size * 0.85; // "인생 비어" Y 위치
   
   return `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2196f3;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#4caf50;stop-opacity:1" />
-    </linearGradient>
-  </defs>
+  <!-- 배경 -->
+  <rect width="${size}" height="${size}" fill="#ffffff"/>
   
-  <!-- 배경 원 -->
-  <circle cx="${center}" cy="${center}" r="${size * 0.48}" fill="url(#grad)"/>
+  <!-- "미뤄?" 텍스트 -->
+  <text x="${centerX}" y="${text1Y}" 
+        font-family="Arial, sans-serif" 
+        font-size="${fontSize1}" 
+        font-weight="bold" 
+        fill="#ff6b6b" 
+        text-anchor="middle" 
+        dominant-baseline="middle">미뤄?</text>
   
-  <!-- 체크마크 (완료 표시) -->
-  <path d="M ${center - radius * 0.4} ${center} 
-           L ${center - radius * 0.1} ${center + radius * 0.3}
-           L ${center + radius * 0.4} ${center - radius * 0.2}"
-        stroke="white" 
-        stroke-width="${size * 0.08}" 
-        fill="none" 
-        stroke-linecap="round" 
-        stroke-linejoin="round"/>
+  <!-- 알람시계 -->
+  <g transform="translate(${centerX}, ${clockY})">
+    <!-- 시계 본체 (노란색/금색) -->
+    <circle cx="0" cy="0" r="${clockSize * 0.4}" 
+            fill="#ffd700" 
+            stroke="#333" 
+            stroke-width="${size * 0.01}"/>
+    
+    <!-- 시계 얼굴 (흰색) -->
+    <circle cx="0" cy="0" r="${clockSize * 0.32}" 
+            fill="#ffffff" 
+            stroke="#333" 
+            stroke-width="${size * 0.008}"/>
+    
+    <!-- 시계 벨 (위쪽 두 개) -->
+    <circle cx="${-clockSize * 0.25}" cy="${-clockSize * 0.45}" 
+            r="${clockSize * 0.12}" 
+            fill="#ffd700" 
+            stroke="#333" 
+            stroke-width="${size * 0.01}"/>
+    <circle cx="${clockSize * 0.25}" cy="${-clockSize * 0.45}" 
+            r="${clockSize * 0.12}" 
+            fill="#ffd700" 
+            stroke="#333" 
+            stroke-width="${size * 0.01}"/>
+    
+    <!-- 시계 손 (4시 방향) -->
+    <!-- 시침 (짧은 바늘) -->
+    <line x1="0" y1="0" 
+          x2="${clockSize * 0.15 * Math.cos(-Math.PI / 3)}" 
+          y2="${clockSize * 0.15 * Math.sin(-Math.PI / 3)}" 
+          stroke="#333" 
+          stroke-width="${size * 0.015}" 
+          stroke-linecap="round"/>
+    
+    <!-- 분침 (긴 바늘) -->
+    <line x1="0" y1="0" 
+          x2="${clockSize * 0.25 * Math.cos(-Math.PI / 2)}" 
+          y2="${clockSize * 0.25 * Math.sin(-Math.PI / 2)}" 
+          stroke="#333" 
+          stroke-width="${size * 0.012}" 
+          stroke-linecap="round"/>
+    
+    <!-- 시계 중심점 -->
+    <circle cx="0" cy="0" r="${size * 0.015}" fill="#333"/>
+    
+    <!-- 그림자 효과 -->
+    <ellipse cx="${size * 0.01}" cy="${clockSize * 0.5 + size * 0.01}" 
+             rx="${clockSize * 0.3}" 
+             ry="${clockSize * 0.1}" 
+             fill="#888" 
+             opacity="0.3"/>
+  </g>
   
-  <!-- 시계 아이콘 (시간 관리) -->
-  <circle cx="${center}" cy="${center}" r="${radius * 0.7}" 
-          stroke="white" 
-          stroke-width="${size * 0.04}" 
-          fill="none" 
-          opacity="0.3"/>
-  <line x1="${center}" y1="${center}" 
-        x2="${center}" y2="${center - radius * 0.4}" 
-        stroke="white" 
-        stroke-width="${size * 0.04}" 
-        stroke-linecap="round"/>
-  <line x1="${center}" y1="${center}" 
-        x2="${center + radius * 0.3}" y2="${center}" 
-        stroke="white" 
-        stroke-width="${size * 0.04}" 
-        stroke-linecap="round"/>
+  <!-- "인생 비어" 텍스트 -->
+  <text x="${centerX}" y="${text2Y}" 
+        font-family="Arial, sans-serif" 
+        font-size="${fontSize2}" 
+        font-weight="bold" 
+        fill="#000000" 
+        text-anchor="middle" 
+        dominant-baseline="middle">인생 비어</text>
 </svg>`;
 };
 
@@ -81,15 +127,31 @@ const generateIcon = async (size, filename) => {
   }
 };
 
-// 아이콘 생성
+// 아이콘 생성 (다양한 사이즈)
 const generateIcons = async () => {
-  console.log('🎨 Generating PWA icons...');
+  console.log('🎨 Generating PWA icons with "미뤄?" design...');
   console.log(`📁 Output directory: ${publicDir}`);
   
-  const results = await Promise.all([
-    generateIcon(192, 'icon-192.png'),
-    generateIcon(512, 'icon-512.png')
-  ]);
+  const sizes = [
+    { size: 192, filename: 'icon-192.png' },
+    { size: 512, filename: 'icon-512.png' },
+    { size: 180, filename: 'icon-180.png' }, // iOS
+    { size: 167, filename: 'icon-167.png' }, // iOS
+    { size: 152, filename: 'icon-152.png' }, // iOS
+    { size: 120, filename: 'icon-120.png' }, // iOS
+    { size: 87, filename: 'icon-87.png' },  // iOS
+    { size: 80, filename: 'icon-80.png' },   // iOS
+    { size: 76, filename: 'icon-76.png' },   // iOS
+    { size: 60, filename: 'icon-60.png' },   // iOS
+    { size: 58, filename: 'icon-58.png' },   // iOS
+    { size: 40, filename: 'icon-40.png' },   // iOS
+    { size: 29, filename: 'icon-29.png' },   // iOS
+    { size: 20, filename: 'icon-20.png' }   // iOS
+  ];
+  
+  const results = await Promise.all(
+    sizes.map(({ size, filename }) => generateIcon(size, filename))
+  );
   
   if (results.every(r => r)) {
     console.log('✨ All icons generated successfully!');
